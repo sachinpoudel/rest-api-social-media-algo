@@ -7,5 +7,6 @@ export interface IToken  {
     userId: mongoose.Types.ObjectId;
 accessToken?: string;
 refreshToken?: string;
+_id: mongoose.Types.ObjectId;
 
 }

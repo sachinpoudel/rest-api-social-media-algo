@@ -3,5 +3,6 @@ import { IUser } from "./User";
 
 export interface AuthenticatedRequestBody<T> extends Request {
     body: T;
-    user?: IUser
+    user?: IUser;
+    file?: Express.Multer.File | undefined;
 }

@@ -7,7 +7,8 @@
 //       skills,
 //       profileUrl,
 
-import z from "zod";
+import { ref } from "process";
+import z, { ZodObject } from "zod";
 
 //       acceptTerms,
 //       confirmationCode,
@@ -28,7 +29,50 @@ export const userSchema = {
         confirmationCode: z.string().optional()
     }),
     loginUser : z.object({
-        email: z.string().email("Invalid email address"),
+        email: z.string().lowercase(),
         password: z.string().min(6, "Password must be at least 6 characters long")
+    }),
+
+    logoutUser: z.object({
+        refreshToken: z.string().min(1, "Refresh token is required")
+    }),
+
+
+updateUser: z.object({
+    userId: z.string().min(1, "User ID is required"),
+    email: z.string().email("Invalid email address").optional(),
+    firstName: z.string().min(2, "First name must be at least 2 characters long").optional(),
+    lastName: z.string().min(2, "Last name must be at least 2 characters long").optional(),
+
+    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits long").optional(),
+    profileUrl: z.string().url("Invalid URL").optional(),
+    bio: z.string().max(160, "Bio must be at most 160 characters long").optional(),
+    skills: z.array(z.string()).optional(),
+}),
+
+
+
+    refreshToken: z.object({
+        refreshToken: z.string().min(1, "Refresh token is required")
+    }),
+    validatedUserId: z.object({
+        userId: z.string().min(1, "User ID is required")
+    }),
+    verifyUserMail: z.object({
+        token: z.string().min(1, "Verification token is required"),
+        userId: z.string().min(1, "User ID is required")
+    }),
+    sendVerificationMail: z.object({
+        email: z.string().email("Invalid email address")
+    }),
+    resetPassword: z.object({
+        token: z.string().min(1, "Reset token is required"),
+        userId: z.string().min(1, "User ID is required"),
+        password: z.string().min(6, "Password must be at least 6 characters long"),
+        confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters long")
+    }),
+    verifyToken: z.object({
+        token: z.string().min(1, "Token is required")
     })
 }
+export default userSchema;

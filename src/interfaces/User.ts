@@ -1,17 +1,22 @@
-import mongoose, { Document, Types } from 'mongoose';
-import { USER_AWARD_OPTIONS, USER_PLAN_OPTIONS, GENDER_OPTIONS, STATUS_OPTIONS} from '../constants/auth';
-import type {Request} from 'express';
+import mongoose, { Document, Types } from "mongoose";
+import {
+  USER_AWARD_OPTIONS,
+  USER_PLAN_OPTIONS,
+  GENDER_OPTIONS,
+  STATUS_OPTIONS,
+} from "../constants/auth";
+import type { Request } from "express";
 
 export interface FollowT {
-    name:string;
-    surname: string;
-    profileUrl: string;
-    bio?:string;
-    userId: string;
+  name: string;
+  surname: string;
+  profileUrl: string;
+  bio?: string;
+  userId: string;
 }
 
 export interface IUser extends Document {
-firstName: string;
+  firstName: string;
   lastName: string;
   email: string;
   password: string;
@@ -49,12 +54,11 @@ firstName: string;
 }
 
 export interface IRequestUser extends Request {
-    user: IUser;
+  user: IUser;
 }
 
-
 export interface IAuthRequest extends Request {
-    headers: {authoraization: string}
-    cookies: {authToken: string; accessToken:string; refreshToken:string}
-user: IUser;    
+//   headers: { authorization?: string; Authorization?: string };
+//   cookies: { authToken?: string; accessToken?: string; refreshToken?: string };
+  user?: IUser;
 }

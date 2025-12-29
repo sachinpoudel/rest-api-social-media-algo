@@ -4,13 +4,10 @@ import { BadRequest } from '../error/app-error';
 type asyncHandlerType = (req:Request, res:Response, next:NextFunction) => Promise<void | Response>;
 
 
-export const asyncHandler =  (controller: asyncHandlerType) => 
-    async(req:Request,res:Response,next:NextFunction) => {
-        try {
-        await controller(req, res, next);
-    } catch (error:any) {
-        next(error)
-    }
-    } 
+export const asyncHandler =
+  (controller: asyncHandlerType) =>
+  (req: Request, res: Response, next: NextFunction) =>
+    Promise.resolve(controller(req, res, next)).catch(next);
+
 
     

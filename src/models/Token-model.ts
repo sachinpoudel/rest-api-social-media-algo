@@ -44,7 +44,7 @@ export const TokenSchema: Schema<ITokenDocument> = new mongoose.Schema(
   },
   { timestamps: true }
 );
-TokenSchema.methods.generatePasswordRest = function () {
+TokenSchema.methods.generatePasswordReset = function () {
     this.emailVerificationToken = crypto.randomBytes(20).toString("hex");
     this.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 }

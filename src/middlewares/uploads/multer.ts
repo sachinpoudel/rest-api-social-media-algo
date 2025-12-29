@@ -20,8 +20,8 @@ export const fileStorage = multer.diskStorage({
     file: Express.Multer.File,
     cb: DestinaionCb
   ): void => {
-    const fileName = request.originalUrl.includes("users");
-    cb(null, `public/uploads/${fileName}`);
+    const fileName = request.originalUrl.split('/').includes("users");
+    cb(null, `src/public/uploads/${fileName}`);
   },
   filename: (
     request:Request, file: Express.Multer.File, cb: FileNameCb
@@ -42,7 +42,7 @@ export const fileStorage = multer.diskStorage({
 });
 
 
-const uploadImg = multer({
+export const uploadImg = multer({
     storage: fileStorage,
     limits: {
         fileSize: 5 * 1024 * 1024, // 5 MB

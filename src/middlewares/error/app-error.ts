@@ -3,7 +3,7 @@ import  { httpstatusCodeType,HTTPSTATUS } from "../../configs/http-config";
 class AppError extends Error {
   public statusCode: httpstatusCodeType;
   constructor(message: string, statusCode = HTTPSTATUS.INTERNAL_SERVER_ERROR) {
-    super(message);
+    super(message );
     this.statusCode = statusCode;
   }
 }
