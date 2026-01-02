@@ -173,7 +173,7 @@ export const unFollowUserService = asyncHandler(
             $pull: {following: req.params.userId}
         })
 
-const updatedUser = await User.findById(req.user?._id).selcet(
+const updatedUser = await User.findById(req.user?._id).select(
     "-password -confirmPassword -status -isDeleted -acceptedTerms -isVerified"
   )
   .populate("followers", "firstName lastName profileUrl bio")
