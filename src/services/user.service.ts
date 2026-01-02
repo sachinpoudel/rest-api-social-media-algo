@@ -94,7 +94,7 @@ export const followUserService = asyncHandler(
       "following"
     );
 
-    const isAlreadyFollowed = toBeFollowedUser.followers.some((user) => {
+    const isAlreadyFollowed = toBeFollowedUser.followers.some((user:any) => {
       if (user._id.toString() === currentUser?._id.toString()) {
         return true;
       }
@@ -157,7 +157,7 @@ export const unFollowUserService = asyncHandler(
       throw new NotFound("Current user not found");
     }
 
-    const isAlreadyFollowed = toBeFollowedUser.followers.some((user) => {
+    const isAlreadyFollowed = toBeFollowedUser.followers.some((user:any) => {
       if (user._id.toString() === currentUser?._id.toString()) {
         return true;
       }
