@@ -151,13 +151,13 @@ const UserSchema: mongoose.Schema<IUserDocument> =
       posts: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          //   ref: 'Post'
+            // ref: 'Post'
         },
       ],
       comments: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          //   ref: 'Comment'
+            // ref: 'Comment'
         },
       ],
       blocked: [

@@ -40,4 +40,9 @@ export class UnprocessableEntity extends AppError {
     }
 }
 
+export class ForbiddenError extends AppError {
+    constructor(message = "forbidden") {
+        super(message, HTTPSTATUS.FORBIDDEN)
+    }
+}
 export default AppError;
