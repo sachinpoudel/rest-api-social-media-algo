@@ -35,6 +35,7 @@ const envConfigs = () => {
     CLOUDINARY_API_KEY: getEnv("CLOUDINARY_API_KEY"),
     CLOUDINARY_API_SECRET: getEnv("CLOUDINARY_API_SECRET"),
 
+    PWD: getEnv("PWD"),
   };
   return config;
 };

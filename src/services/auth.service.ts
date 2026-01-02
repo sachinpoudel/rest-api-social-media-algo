@@ -418,7 +418,7 @@ export const updateAccountService = asyncHandler(
     }
 
     if (req.file && req.file.filename) {
-      const localFilePath = "src/public/uploads/" + req.file.filename;
+      const localFilePath = `${Env.PWD}/public/uploads/${req.file.filename}`;
       const cloudinaryResp = await cloudinary.uploader.upload(localFilePath, {
         folder: "users",
         overwrite: true,
