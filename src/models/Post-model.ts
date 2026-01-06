@@ -32,7 +32,7 @@ export interface IPostDocument extends IPost {
   photoUrl: {
     type: String,
     trim: true,
-    required: [true, "Post photo URL is required"],
+    required: false,
   },
   cloudinary_id: {
     type: String,
@@ -85,7 +85,7 @@ export interface IPostDocument extends IPost {
   ],
   shares: [
     {
-      user: {
+      user: { // this gives info about users who shared the post
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "User is required to share the post"],
@@ -94,7 +94,7 @@ export interface IPostDocument extends IPost {
   ],
   views: [
     {
-      user: {
+      user: { // this gives info about users who viewed the post
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "User is required to view the post"],
@@ -103,16 +103,8 @@ export interface IPostDocument extends IPost {
   ],
   comments: [
     {
-      comment: {
-        type: String,
-        required: [true, "Comment content is required"],
-        trim: true,
-      },
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: [true, "User is required for the comment"],
-      },
+     type: mongoose.Schema.Types.ObjectId,
+     ref: "Comment",
     },
   ],
 },{timestamps: true});

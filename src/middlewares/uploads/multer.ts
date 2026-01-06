@@ -3,6 +3,7 @@ import { Request } from "express";
 import { request } from "http";
 import { Env } from "../../configs/env-config";
 import getImageExtension from "../../utils/get-img-extension";
+import fs from "fs";
 
 interface DestinationCb {
   (error: Error | null, destination: string): void;
@@ -21,7 +22,14 @@ export const fileStorage = multer.diskStorage({
     cb: DestinationCb
   ): void => {
     const fileName = request.originalUrl.split('/').includes("users") ? 'users' : request.originalUrl.split('/').includes("posts") ? 'posts' : 'others';
-    cb(null, `${Env.PWD}/public/uploads/${fileName}`);
+    const uploadPath = `${Env.PWD}/public/uploads/${fileName}`;
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    
+    cb(null, uploadPath);
   },
   filename: (
     request:Request, file: Express.Multer.File, cb: FileNameCb
