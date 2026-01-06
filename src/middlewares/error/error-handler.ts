@@ -10,10 +10,16 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   if (err instanceof AppError) {
+    const isServerError = err.statusCode >= HTTPSTATUS.INTERNAL_SERVER_ERROR;
+    if (isServerError || !err.isOperational) {
+      console.error(err);
+    }
     return res.status(err.statusCode).json({
-      message: err.message,
+      error: err.name,
+      message: isServerError ? "Internal server error" : err.message,
     });
   }
+
 
   if (err instanceof ZodError) {
     return formatZodError(res, err);

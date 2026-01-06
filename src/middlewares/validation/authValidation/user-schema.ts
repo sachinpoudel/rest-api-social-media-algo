@@ -7,6 +7,7 @@
 //       skills,
 //       profileUrl,
 
+import { isValidObjectId } from "mongoose";
 import { ref } from "process";
 import z, { ZodObject } from "zod";
 
@@ -39,7 +40,7 @@ export const userSchema = {
 
 
 updateUser: z.object({
-    userId: z.string().min(1, "User ID is required"),
+    userId: isValidObjectId("Invalid user ID"),
     email: z.string().email("Invalid email address").optional(),
     firstName: z.string().min(2, "First name must be at least 2 characters long").optional(),
     lastName: z.string().min(2, "Last name must be at least 2 characters long").optional(),
@@ -56,18 +57,20 @@ updateUser: z.object({
         refreshToken: z.string().min(1, "Refresh token is required")
     }),
     validatedUserId: z.object({
-        userId: z.string().min(1, "User ID is required")
-    }),
-    verifyUserMail: z.object({
+        userId: isValidObjectId("Invalid user ID"),
         token: z.string().min(1, "Verification token is required"),
-        userId: z.string().min(1, "User ID is required")
+    }),
+
+    verifyUserMail: z.object({
+        userId: isValidObjectId("Invalid user ID"),
+        token: z.string().min(1, "Verification token is required"),
     }),
     sendVerificationMail: z.object({
         email: z.string().email("Invalid email address")
     }),
     resetPassword: z.object({
         token: z.string().min(1, "Reset token is required"),
-        userId: z.string().min(1, "User ID is required"),
+        userId: isValidObjectId("Invalid user ID"),
         password: z.string().min(6, "Password must be at least 6 characters long"),
         confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters long")
     }),
