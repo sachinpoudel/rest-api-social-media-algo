@@ -1,9 +1,6 @@
 import mongoose, { Types } from "mongoose";
+import { CommentI } from "./CustomTypes";
 
-export interface CommentI extends mongoose.Document {
-    comment: string;
-    user: mongoose.Types.ObjectId;
-}
 
 export interface IShare {
   user: mongoose.Types.ObjectId;
@@ -43,7 +40,7 @@ export interface IPost extends mongoose.Document {
     disLikes: DisLikeT[];
     views: ViewsT[];
     shares: ShareT[];
-    category?: string;
+    category: string;
     cloudinary_id?:string;
     timestamps?: boolean;
     _id: mongoose.Types.ObjectId;

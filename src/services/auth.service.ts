@@ -12,7 +12,6 @@ import {
 import { getProfilePicUrl } from "../utils/get-prof-picurl";
 import { getRoleFromEmail } from "../utils/get-role-from-email";
 import { Env } from "../configs/env-config";
-import TokenModel from "../models/Token-model";
 import Token from "../models/Token-model";
 import { SignOptions } from "jsonwebtoken";
 import { sendMail } from "../utils/sendMail";
@@ -21,15 +20,12 @@ import {
   sendResetPasswordEmailTemplate,
 } from "../utils/email-template";
 import { HTTPSTATUS } from "../configs/http-config";
-import { access } from "fs";
 import { IToken } from "../interfaces/Token";
 import { verifyRefreshToken } from "../middlewares/auth/verify-refresh-token";
 import { deleteFile } from "../utils/file";
 import cloudinary from "../middlewares/uploads/cloudinary";
 import { AUTHORIZATION_ROLES } from "../constants/auth";
-import { success } from "zod";
-import { validateHeaderValue } from "http";
-import { error } from "console";
+;
 
 export const signUpService = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -409,7 +405,7 @@ export const updateAccountService = asyncHandler(
 
       if (existingUser && !existingUser._id.equals(user._id)) { // this if block prevents user from updating to an email that is already in use by another account
         if (req.file?.filename) {
-          const localFilePath = "/public/uploads/" + req.file.filename;
+          const localFilePath = "/public/uploads/users/" + req.file.filename;
 
           deleteFile(localFilePath);
         }
