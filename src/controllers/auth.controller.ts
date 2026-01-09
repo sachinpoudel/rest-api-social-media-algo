@@ -326,14 +326,14 @@ export const verifyEmailController = asyncHandler(
     next: NextFunction
   ) => {
    
-    const { token,userId } = req.query;
+    const { token, userId } = req.query;
 
     if (!userId || !token) {
       throw new BadRequest("Invalid verification link");
     }
 
     const { userName, alreadyVerified } = await verifyEmailService({
-      userId,
+      userId: String(userId),
       token: String(token),
     });
 

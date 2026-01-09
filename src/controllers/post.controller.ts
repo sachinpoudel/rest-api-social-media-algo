@@ -271,7 +271,7 @@ export const addCommentInPostController = asyncHandler(
     res: Response,
     next: NextFunction
   ) => {
-    const { comments } = req.body as IPost;
+    const { comments } = req.body as unknown as { comments: string };
     const postId = req.params.postId;
     const userId = req.user?._id?.toString();
 
@@ -328,7 +328,7 @@ export const updateCommentInPostController = asyncHandler(
     res: Response,
     next: NextFunction
   ) => {
-    const { comments } = req.body as IPost;
+    const { newCommentText } = req.body as unknown as { newCommentText: string };
     const { postId, commentId } = req.params;
     const userId = req.user?._id?.toString();
 
@@ -340,7 +340,7 @@ export const updateCommentInPostController = asyncHandler(
       throw new UnAuthorized("User not authorized to update comment");
     }
 
-    if (!comments) {
+    if (!newCommentText) {
       throw new UnprocessableEntity("Comment text is required");
     }
 
@@ -348,7 +348,7 @@ export const updateCommentInPostController = asyncHandler(
       postId,
       commentId,
       userId,
-      comments,
+      newCommentText,
     });
 
     res.status(HTTPSTATUS.OK).json({

@@ -367,7 +367,7 @@ input: AddCommentInPostInput
     post: postId,
   });
 
-  post.comments.push(newComment._id as Types.ObjectId);
+  post.comments.push(newComment._id);
   await post.save();
   await newComment.populate("user", "firstName lastName profileUrl bio");
   

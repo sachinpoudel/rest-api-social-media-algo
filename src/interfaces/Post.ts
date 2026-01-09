@@ -35,7 +35,7 @@ export interface IPost extends mongoose.Document {
   description: string;
   photoUrl: string;
   author: mongoose.Types.ObjectId;
-  comments: IComment[];
+  comments: Array<Types.ObjectId | IComment>;
   likes: LikeT[];
   disLikes: DisLikeT[];
   views: ViewsT[];

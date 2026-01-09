@@ -158,3 +158,96 @@ export interface ChangePasswordInput {
   newPassword:string;
   confirmNewPassword:string;
 }
+
+// ============= User Service Types =============
+
+export interface GetUsersOutput {
+  users: Partial<IUser>[];
+  count: number;
+}
+
+export interface GetUserInput {
+  userId: string;
+}
+
+export interface GetUserOutput {
+  user: Partial<IUser>;
+}
+
+export interface FollowUserInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface FollowUserOutput {
+  user: Partial<IUser>;
+  followedUser: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface UnFollowUserInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface UnFollowUserOutput {
+  user: Partial<IUser>;
+  unfollowedUser: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface AddFriendInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface AddFriendOutput {
+  user: Partial<IUser>;
+  addedFriend: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface UnFriendInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface UnFriendOutput {
+  user: Partial<IUser>;
+  unfriendedUser: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface BlockUserInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface BlockUserOutput {
+  user: Partial<IUser>;
+  blockedUser: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface UnblockUserInput {
+  currentUserId: Types.ObjectId;
+  targetUserId: string;
+}
+
+export interface UnblockUserOutput {
+  user: Partial<IUser>;
+  unblockedUser: {
+    firstName: string;
+    lastName: string;
+  };
+}

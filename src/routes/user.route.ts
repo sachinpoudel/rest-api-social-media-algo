@@ -1,15 +1,15 @@
 import express from "express";
 import { isLogin } from "../middlewares/auth/check-is-auth";
-import { 
-  getUserService, 
-  getUsersService, 
-  followUserService, 
-  unFollowUserService, 
-  addFriendService,
-  unFriendService,
-  blockUserService,
-  unblockUserService
-} from "../services/user.service";
+import {
+  getUsersController,
+  getUserController,
+  followUserController,
+  unFollowUserController,
+  addFriendController,
+  unFriendController,
+  blockUserController,
+  unblockUserController,
+} from "../controllers/user.controller";
 import { cacheByKey } from "../middlewares/cache/cache";
 import { invalidateKeys } from "../middlewares/cache/invalidate";
 import { cache } from "../utils/cache";
@@ -18,8 +18,8 @@ import { IUser } from "../interfaces/User";
 
 const router = express.Router();
 
-router.get("/", cacheByKey(() => cache.key.userList(), cache.TTL.short), getUsersService);
-router.get("/:userId", cacheByKey((req) => cache.key.userById(req.params.userId!)), getUserService);
+router.get("/", cacheByKey(() => cache.key.userList(), cache.TTL.short), getUsersController);
+router.get("/:userId", cacheByKey((req) => cache.key.userById(req.params.userId!)), getUserController);
 
 router.post(
   "/:userId/follow",
@@ -29,7 +29,7 @@ router.post(
     (req) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  followUserService
+  followUserController
 );
 
 router.post(
@@ -40,7 +40,7 @@ router.post(
     (req: Request) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  unFollowUserService
+  unFollowUserController
 );
 
 router.post(
@@ -51,7 +51,7 @@ router.post(
     (req: Request) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  addFriendService
+  addFriendController
 );
 
 router.post(
@@ -62,7 +62,7 @@ router.post(
     (req: Request) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  unFriendService
+  unFriendController
 );
 
 router.post(
@@ -73,7 +73,7 @@ router.post(
     (req: Request) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  blockUserService
+  blockUserController
 );
 
 router.post(
@@ -84,7 +84,7 @@ router.post(
     (req: Request) => cache.key.userById(req.params.userId!),
     () => cache.key.userList()
   ),
-  unblockUserService
+  unblockUserController
 );
 
 export default router;
