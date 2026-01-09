@@ -107,18 +107,29 @@ export interface IPostDocument extends IPost {
      ref: "Comment",
     },
   ],
-},{timestamps: true});
+},{timestamps: true,
+  toJSON: { virtuals: true },
+});
 
-PostSchema.pre(/^find/, function(next) {
-  PostSchema.virtual('viewsCount').get(function(this: IPostDocument){
-    return this.views.length;
-  })
-})
+PostSchema.virtual('viewsCount').get(function(this: IPostDocument){
+  return this.views.length;
+});
 
+PostSchema.virtual('likesCount').get(function(this: IPostDocument) {
+  return this.likes.length;
+});
 
+PostSchema.virtual('daysAgo').get(function (this: IPostDocument) {
+  const daysAgo = Math.floor((Date.now() - new Date(this.createdAt).getTime()) / 86400000); // 86400000 ms = 1 day
 
-
-
+  if (daysAgo === 0) {
+    return 'Today';
+  }
+  if (daysAgo === 1) {
+    return 'Yesterday';
+  }
+  return `${daysAgo} days ago`;
+});
 
 
 export const Post = mongoose.model<IPostDocument>("Post", PostSchema);

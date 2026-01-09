@@ -6,7 +6,7 @@ import {
 import { asyncHandler } from "../auth/async-handler";
 import { Model } from "mongoose";
 
-export const postPaginationMiddleware = () => {
+export const postPaginationMiddleware = (model: Model<any>) => {
   return async (
     req: TPaginationRequest,
     res: TPaginationResponse,
@@ -37,7 +37,7 @@ export const postPaginationMiddleware = () => {
         };
       }
 
-      let query = Model.find(
+      let query = model.find(
         req.query.search ? searchQuery : JSON.parse(queryString)
       );
 
@@ -57,7 +57,7 @@ export const postPaginationMiddleware = () => {
         currentPage: { page, limit },
         totalDocs: 0,
       };
-         const totalCount = await Model.countDocuments().exec();
+         const totalCount = await model.countDocuments().exec();
       results.totalDocs = totalCount;
 
       if (endIndex < totalCount) {

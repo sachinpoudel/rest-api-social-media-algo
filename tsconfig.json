@@ -10,7 +10,7 @@
     "module": "commonjs",
     "target": "es2022",
     "moduleResolution": "node",
-    "types": [],
+    // "types": [], // This line is removed to allow automatic type discovery
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -45,5 +45,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-
+  "include": [
+    "src"
+  ]
 }

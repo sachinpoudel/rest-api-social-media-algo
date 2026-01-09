@@ -36,6 +36,11 @@ const envConfigs = () => {
     CLOUDINARY_API_SECRET: getEnv("CLOUDINARY_API_SECRET"),
 
     PWD: getEnv("PWD"),
+
+    UPSTASH_REDIS_REST_URL: getEnv("UPSTASH_REDIS_REST_URL"),
+    UPSTASH_REDIS_REST_TOKEN: getEnv("UPSTASH_REDIS_REST_TOKEN"),
+
+    REDIS_URL: getEnv("REDIS_URL"),
   };
   return config;
 };

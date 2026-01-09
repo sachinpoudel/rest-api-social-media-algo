@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@upstash/redis": "^1.36.0",
     "bcrypt": "^6.0.0",
     "check-lint": "^0.1.7",
     "cloudinary": "^2.8.0",
@@ -23,6 +24,7 @@
     "dotenv": "^17.2.3",
     "dotenv-safe": "^9.1.0",
     "express": "^5.2.1",
+    "ioredis": "^5.9.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.2",
     "multer": "^2.0.2",

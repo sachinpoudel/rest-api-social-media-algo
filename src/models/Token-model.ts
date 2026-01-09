@@ -1,5 +1,5 @@
 import { IToken } from "../interfaces/Token";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { SignOptions } from "jsonwebtoken";

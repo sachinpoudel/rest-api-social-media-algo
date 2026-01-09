@@ -4,6 +4,8 @@ export interface IComment extends Document {
   comments: string;
   user: mongoose.Types.ObjectId;
   post: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const CommentSchema: Schema<IComment> = new mongoose.Schema({

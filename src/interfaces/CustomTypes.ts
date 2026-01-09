@@ -30,15 +30,21 @@ export interface TPaginationRequest extends Request {
 export interface TPaginationResponse extends Response {
   paginatedResults?: {
     results: any;
-    next: string;
-    previous: string;
-    currentPage: string;
-    totalDocs: string;
-    totalPages: string;
-    lastPage: string;
+    next?: {
+      page: number;
+      limit: number;
+    };
+    previous?: {
+      page: number;
+      limit: number;
+    };
+    currentPage: {
+      page: number;
+      limit: number;
+    };
+    totalDocs: number;
+    totalPages: number;
+    lastPage: number;
   };
 }
-export interface CommentI extends mongoose.Document {
-    comment: string;
-    user: mongoose.Types.ObjectId;
-    post: mongoose.Types.ObjectId;}
+

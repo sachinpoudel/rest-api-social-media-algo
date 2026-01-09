@@ -5,7 +5,7 @@ export const AUTHORIZATION_ROLES = {
     MODERATOR: 'moderator',
     CLIENT: 'client',
     GUIDE: 'guide'
-}
+} as const;
 
 export const GENDER_OPTIONS = ['male', 'female', 'other'] as const;
 

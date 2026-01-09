@@ -8,6 +8,7 @@ export const loginValidation : RequestHandler =(req,res,next) => validator(userS
 
 export const logouValidation: RequestHandler = (req,res,next) => validator(userSchema.logoutUser, {...req.body}, next);
 
+export const changePasswordValidation:  RequestHandler =(req,res,next) => validator(userSchema.changePassword, {...req.body, ...req.params}, next);
 
 export const refreshTokenValidation: RequestHandler = (req,res,next) => validator(userSchema.refreshToken, {...req.body}, next);
 

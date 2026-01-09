@@ -13,8 +13,8 @@ const getFromEmail = () =>
 const getToEmail = (to: string) => (Env.NODE_ENV === 'development' ? 'delivered@resend.dev' : to);
 
 
-export const sendMail = async( {to, subject, text, html}:Params) => {
-    resend.emails.send({
+export const sendMail = async( {to, subject, text, html}:Params): Promise<any> => {
+    return resend.emails.send({
         from: getFromEmail() as string,
         to : getToEmail(to) as string,
         subject,

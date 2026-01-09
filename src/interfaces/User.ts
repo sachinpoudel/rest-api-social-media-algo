@@ -6,6 +6,7 @@ import {
   STATUS_OPTIONS,
 } from "../constants/auth";
 import type { Request } from "express";
+import { IUserDocument } from "../models/user-model";
 
 export interface FollowT {
   name: string;
@@ -47,10 +48,12 @@ export interface IUser extends Document {
   isVerified: boolean;
   isDeleted: boolean;
   dateOfBirth?: Date;
-  userId?: string;
+  userId: string | undefined;
   timestamps?: boolean;
   _id: mongoose.Types.ObjectId;
   cloudinary_id?: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export interface IRequestUser extends Request {
@@ -58,7 +61,100 @@ export interface IRequestUser extends Request {
 }
 
 export interface IAuthRequest extends Request {
-//   headers: { authorization?: string; Authorization?: string };
-//   cookies: { authToken?: string; accessToken?: string; refreshToken?: string };
+  //   headers: { authorization?: string; Authorization?: string };
+  //   cookies: { authToken?: string; accessToken?: string; refreshToken?: string };
   user?: IUser;
+}
+
+export interface SignUpInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  bio?: string | undefined;
+  skills: string[];
+  profileUrl?: string;
+  acceptTerms: boolean;
+
+  gender?: (typeof GENDER_OPTIONS)[number] | undefined;
+}
+
+export interface SignUpResult {
+  user: IUserDocument;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface LoginResult {
+  user: IUserDocument;
+  accessToken: string;
+  refreshToken: string;
+  needsVerification: boolean;
+  verifyEmailLink?: string;
+}
+
+export interface UpdateAccountInput {
+  userId: string;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  dateOfBirth?: Date | undefined;
+  email?: string | undefined;
+  profileUrl?: string | undefined;
+  acceptTerms?: boolean | undefined;
+  phoneNumber?: string | undefined;
+  bio?: string | undefined;
+  skills?: string[] | undefined;
+  file?: Express.Multer.File | undefined;
+}
+
+export interface UpdateAccountResult {
+  user: Partial<IUser>;
+}
+
+export interface DeleteAccountInput {
+  userId: string;
+  requestingUserId: string;
+  requestingUserRole: string;
+}
+
+export interface GetProfileInput {
+  userId: string;
+
+}
+export interface GetProfileResult {
+  user: Partial<IUser>;
+}
+
+export interface VerifyEmailInput {
+  userId: string;
+  token:string;
+}
+
+export interface VerifyEmailResult {
+  userName: string;
+  alreadyVerified?: boolean;
+}
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  userId: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ChangePasswordInput {
+  userId:string;
+  password:string;
+  newPassword:string;
+  confirmNewPassword:string;
 }

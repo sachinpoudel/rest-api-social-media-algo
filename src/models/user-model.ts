@@ -198,8 +198,8 @@ const UserSchema: mongoose.Schema<IUserDocument> =
       },
       isVerified: {
         type: Boolean,
-        default: true,
-        required: false,
+        default: false,
+        
       },
       isDeleted: {
         type: Boolean,

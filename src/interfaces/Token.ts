@@ -6,7 +6,16 @@ export interface IToken  {
     resetPasswordToken?: string;
     userId: mongoose.Types.ObjectId;
 accessToken?: string;
-refreshToken?: string;
+refreshToken?: string | undefined;
 _id: mongoose.Types.ObjectId;
 
+}
+export interface RefreshTokenInput {
+    refreshToken: string;
+}
+
+export interface RefreshTokenResult {
+    accessToken: string;
+    refreshToken: string;
+    
 }

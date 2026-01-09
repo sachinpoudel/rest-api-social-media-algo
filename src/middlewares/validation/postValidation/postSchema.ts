@@ -9,14 +9,7 @@ export const postSchema = {
         photoUrl: z.string().optional(),
         title: z.string().min(5, "title must be at least 5 characters long"),
         description: z.string().min(10, "description must be at least 10 characters long"),
-        // category: z.string().check(
-        //     POST_CATEGORIES.BUSINESS,
-        //     POST_CATEGORIES.ENTERTAINMENT,
-        //     POST_CATEGORIES.HEALTH,
-        //     POST_CATEGORIES.SPORTS,
-        //     POST_CATEGORIES.TECHNOLOGY
-        // , "invalid category"),
-    
+        category: z.string()
     }),
 
     updatePost: z.object({
