@@ -38,13 +38,13 @@ const router = express.Router();
 // Auth routes
 router.post("/signup", signupValidation, signUpController);
 
-router.post("/login", loginValidation, loginController);
+router.post("/login", isLogin, loginValidation, loginController);
 
 router.post("/logout", logouValidation, logoutController);
 
 router.post('/change-password', changePasswordValidation,isLogin, changePasswordController)
 
-router.post("/refresh-token", refreshTokenValidation, refreshTokenController);
+router.post("/refresh-token",isLogin,  refreshTokenValidation, refreshTokenController);
 
 router.get(
   "/profile",

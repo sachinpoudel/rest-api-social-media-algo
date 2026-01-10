@@ -373,7 +373,7 @@ export const getCommentInPostController = asyncHandler(
 
     const data = await getCommentInPostService(postId, commentId);
 
-    res.status(200).json({
+    res.status(HTTPSTATUS.OK).json({
       success: true,
       message: "Comment fetched successfully",
       data,

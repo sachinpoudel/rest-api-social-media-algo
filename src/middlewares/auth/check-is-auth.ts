@@ -19,7 +19,7 @@ export const isLogin = (
     req.cookies?.refreshToken;
 
   if (!token) {
-    throw new UnAuthorized("Auth failed ! No token provided");
+    return next(new UnAuthorized("Auth failed ! No token provided"));
   }
 
   const jwtSecret = Env.ACCESS_TOKEN_KEY as string;
@@ -29,17 +29,21 @@ export const isLogin = (
     jwtSecret,
     async (error: VerifyErrors | null, decodedUser: any) => {
       if (error) {
-        throw new UnAuthorized("Auth failed ! Invalid token");
+        return next(new UnAuthorized("Auth failed ! Invalid token"));
       }
-      const decodedUserInfo = await User.findById(decodedUser._id).select(
+     try {
+       const decodedUserInfo = await User.findById(decodedUser._id).select(
         "-password -confirmPassword"
       );
 
       if (!decodedUserInfo) {
-        throw new UnAuthorized("Auth failed ! User not found");
+        return next(new UnAuthorized("Auth failed ! User not found"));
       }
       req.user = decodedUserInfo;
       next();
+     } catch (error) {
+      next(error);
+     }
     }
   );
 };

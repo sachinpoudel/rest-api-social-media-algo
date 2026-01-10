@@ -72,6 +72,9 @@ export const signUpService = async (
 
   const role = getRoleFromEmail(email);
 
+
+console.log("Assigned role during signup:", role);
+  
   const finalAcceptTerms =
     acceptTerms ||
     !!(
@@ -87,10 +90,17 @@ export const signUpService = async (
     confirmPassword,
     bio,
     skills: skills || [],
-    role,
+    role: role,
     profileUrl,
     acceptTerms: finalAcceptTerms,
   });
+
+
+if(role === AUTHORIZATION_ROLES.ADMIN){
+    newUser.isVerified = true;
+    newUser.status = "active";
+   newUser.isAdmin = true;
+  }
 
   const user = await newUser.save();
 
