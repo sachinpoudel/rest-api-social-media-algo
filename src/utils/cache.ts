@@ -9,6 +9,8 @@ const key = {
   postList: () => "posts:list",
   postTimeline: (userId: string) => `posts:timeline:${userId}`,
   commentById: (postId: string, commentId: string) => `post:${postId}:comment:${commentId}`,
+   personalizedFeed: (userId: string, page: number) => `feed:${userId}:${page}`,
+  userNotifications: (userId: string) => `notifications:${userId}`,
 };
 
 async function get<T>(k: string): Promise<T | null> {

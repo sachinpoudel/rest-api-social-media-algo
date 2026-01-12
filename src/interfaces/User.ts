@@ -7,6 +7,8 @@ import {
 } from "../constants/auth";
 import type { Request } from "express";
 import { IUserDocument } from "../models/user-model";
+import { IPost } from "./Post";
+import { IPostDocument } from "../models/Post-model";
 
 export interface FollowT {
   name: string;
@@ -39,6 +41,7 @@ export interface IUser extends Document {
   posts: mongoose.Types.ObjectId[];
   comments: mongoose.Types.ObjectId[];
   blocked: mongoose.Types.ObjectId[];
+  interactWith:mongoose.Types.ObjectId[];
   userAward: (typeof USER_AWARD_OPTIONS)[number];
   gender?: (typeof GENDER_OPTIONS)[number];
   plan: (typeof USER_PLAN_OPTIONS)[number];
@@ -250,4 +253,20 @@ export interface UnblockUserOutput {
     firstName: string;
     lastName: string;
   };
+}
+
+export interface GetPersonalizedFeedInput {
+  userId: string;
+  page?: number;
+  limit?:number;
+}
+
+export interface GetPersonalizedFeedOutput {
+  posts: IPostDocument[];
+  totalDocs: number;
+  totalPages: number;
+  currentPage: number;
+  nextPage?: number | undefined;
+  prevPage?: number | undefined;
+  hasMore: boolean;
 }

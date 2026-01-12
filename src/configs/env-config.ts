@@ -41,6 +41,11 @@ const envConfigs = () => {
     UPSTASH_REDIS_REST_TOKEN: getEnv("UPSTASH_REDIS_REST_TOKEN"),
 
     REDIS_URL: getEnv("REDIS_URL"),
+
+
+ARCJET_KEY: 
+ARCJET_ENV: 
+
   };
   return config;
 };

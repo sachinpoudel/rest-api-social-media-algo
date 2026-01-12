@@ -32,13 +32,16 @@ import {
   updateAccountController,
   verifyEmailController,
 } from "../controllers/auth.controller";
+import { StrictRateLimiter } from "../middlewares/auth/rate-limiter";
+import { emailValidator } from "../middlewares/auth/email-validator";
+import { botDetector } from "../middlewares/auth/bot-detector";
 
 const router = express.Router();
 
 // Auth routes
-router.post("/signup", signupValidation, signUpController);
+router.post("/signup", signupValidation,botDetector, emailValidator,signUpController);
 
-router.post("/login", isLogin, loginValidation, loginController);
+router.post("/login", isLogin, botDetector, emailValidator,loginValidation,StrictRateLimiter , loginController);
 
 router.post("/logout", logouValidation, logoutController);
 

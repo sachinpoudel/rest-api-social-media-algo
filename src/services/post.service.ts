@@ -13,10 +13,27 @@ import {
   TPaginationResponse,
 } from "../interfaces/CustomTypes";
 import { IUser, UpdateAccountInput } from "../interfaces/User";
-import { AddCommentInPostInput, CreatePostInput, GetAllPostsInput, GetAllPostsResult, GetPostInput, GetTimelinePostInput, GetTimelinePostResult, IPost, LikePostInput, LikePostResult, LikeT, UpdateCommentInPostInput, UpdatePostInput } from "../interfaces/Post";
+import {
+  AddCommentInPostInput,
+  CreatePostInput,
+  GetAllPostsInput,
+  GetAllPostsResult,
+  GetPostInput,
+  GetTimelinePostInput,
+  GetTimelinePostResult,
+  IPost,
+  LikePostInput,
+  LikePostResult,
+  LikeT,
+  UpdateCommentInPostInput,
+  UpdatePostInput,
+} from "../interfaces/Post";
 import { Comment } from "../models/Comment-model";
 import User from "../models/user-model";
 import { Types } from "mongoose";
+import { createNotificationService } from "./notification.service";
+import { NotificationType } from "../models/Notification-model";
+import { updateUserInteractionScore } from "./feed.service";
 
 export const createPostService = async (
   input: CreatePostInput
@@ -71,30 +88,25 @@ export const createPostService = async (
 };
 
 export const getPostService = async (
-   input: GetPostInput
-  ) :Promise<{post: IPostDocument}> => {
+  input: GetPostInput
+): Promise<{ post: IPostDocument }> => {
+  const { postId } = input;
 
-const {postId} = input;
+  const post = await Post.findById(postId)
+    .select("-cloudinary_id")
+    .populate("author", "firstName lastName email")
+    .populate("likes.user", "firstName lastName profileUrl bio") // show who liked the post
+    .populate("disLikes", "firstName lastName profileUrl bio")
+    .populate("shares", "firstName lastName profileUrl bio")
+    .populate("comments.user", "firstName lastName profileUrl bio")
+    .populate("views", "firstName lastName profileUrl bio");
 
-
-    const post = await Post.findById(postId)
-      .select("-cloudinary_id")
-      .populate("author", "firstName lastName email")
-      .populate("likes.user", "firstName lastName profileUrl bio") // show who liked the post 
-      .populate("disLikes", "firstName lastName profileUrl bio")
-      .populate("shares", "firstName lastName profileUrl bio")
-      .populate("comments.user", "firstName lastName profileUrl bio")
-      .populate("views", "firstName lastName profileUrl bio");
-
-    if (!post) {
-      throw new BadRequest("Post not found");
-    }
-
- return {post}
+  if (!post) {
+    throw new BadRequest("Post not found");
   }
 
-
-
+  return { post };
+};
 
 // export const getAllPostsService = async (
 //   input: GetAllPostsInput
@@ -146,9 +158,6 @@ const {postId} = input;
 //   };
 // };
 
-
-
-
 // export const getTimelinePostsService =  async (
 //   input: GetTimelinePostInput
 //   ): Promise<GetTimelinePostResult> => {
@@ -187,76 +196,78 @@ const {postId} = input;
 //     };
 
 //     return {data}
-  
+
 //   }
 
+export const updatePostService = async (input: UpdatePostInput) => {
+  const {
+    title,
+    description,
+    category,
+    photoUrl,
+    postId,
+    fileId,
+    requestingUserId,
+    requestingUserRole,
+  } = input;
 
-export const updatePostService = async (
-    input: UpdatePostInput
-  ) => {
-    const { title, description, category, photoUrl, postId , fileId, requestingUserId, requestingUserRole } =input;
+  // find the post to be updated by its id
 
-    // find the post to be updated by its id
+  const post = await Post.findById(postId)
+    .select("-cloudinary_id")
+    .populate("author", "firstName lastName bio profileUrl email")
+    .populate("likes.user", "firstName lastName profileUrl bio")
+    .populate("dislikes", "firstName lastName profileUrl bio")
+    .populate("shares", "firstName lastName profileUrl bio")
+    .populate("comments.user", "firstName lastName profileUrl bio")
+    .populate("views", "firstName lastName profileUrl bio");
 
-
-
-    const post = await Post.findById(postId)
-      .select("-cloudinary_id")
-      .populate("author", "firstName lastName bio profileUrl email")
-      .populate("likes.user", "firstName lastName profileUrl bio")
-      .populate("dislikes", "firstName lastName profileUrl bio")
-      .populate("shares", "firstName lastName profileUrl bio")
-      .populate("comments.user", "firstName lastName profileUrl bio")
-      .populate("views", "firstName lastName profileUrl bio");
-
-    if (!post) {
-      throw new BadRequest("Post not found");
-    }
-
-   
-    // now update the post fields  and cloudinary image if new image is provided
-
-    if (post.cloudinary_id && fileId) {
-      // this will delete the old image from cloudinary
-      await cloudinary.uploader.destroy(post.cloudinary_id);
-    }
-    if (requestingUserId !== post.author._id.toString() && requestingUserRole !== "admin" || "ADMIN") {
-          throw new UnprocessableEntity(
-            "You are not authorized to update this post"
-          );
-        }
-
-    let cloudinaryResult: any = null;
-
-    if (fileId) {
-      const localPath = `${Env.PWD}/public/uploads/posts/${fileId}`;
-
-      cloudinaryResult = await cloudinary.uploader.upload(localPath, {
-        folder: "posts",
-        resource_type: "image",
-      });
-      await deleteFile(localPath);
-    }
-
-    post.title = title || post.title;
-    post.description = description || post.description;
-    post.category = category ? category.toLowerCase() : post.category;
-    post.photoUrl =
-      fileId && cloudinaryResult
-        ? cloudinaryResult.secure_url
-        : photoUrl || post.photoUrl;
-    post.cloudinary_id =
-      fileId && cloudinaryResult
-        ? cloudinaryResult.public_id
-        : post.cloudinary_id;
-
-    const updatedPost = await post.save({});
-
-  
-return {updatedPost}
- 
+  if (!post) {
+    throw new BadRequest("Post not found");
   }
 
+  // now update the post fields  and cloudinary image if new image is provided
+
+  if (post.cloudinary_id && fileId) {
+    // this will delete the old image from cloudinary
+    await cloudinary.uploader.destroy(post.cloudinary_id);
+  }
+  if (
+    (requestingUserId !== post.author._id.toString() &&
+      requestingUserRole !== "admin") ||
+    "ADMIN"
+  ) {
+    throw new UnprocessableEntity("You are not authorized to update this post");
+  }
+
+  let cloudinaryResult: any = null;
+
+  if (fileId) {
+    const localPath = `${Env.PWD}/public/uploads/posts/${fileId}`;
+
+    cloudinaryResult = await cloudinary.uploader.upload(localPath, {
+      folder: "posts",
+      resource_type: "image",
+    });
+    await deleteFile(localPath);
+  }
+
+  post.title = title || post.title;
+  post.description = description || post.description;
+  post.category = category ? category.toLowerCase() : post.category;
+  post.photoUrl =
+    fileId && cloudinaryResult
+      ? cloudinaryResult.secure_url
+      : photoUrl || post.photoUrl;
+  post.cloudinary_id =
+    fileId && cloudinaryResult
+      ? cloudinaryResult.public_id
+      : post.cloudinary_id;
+
+  const updatedPost = await post.save({});
+
+  return { updatedPost };
+};
 
 export const deleteUserPostService = async (
   postId: string,
@@ -268,13 +279,8 @@ export const deleteUserPostService = async (
   if (!post) {
     throw new BadRequest("Post not found");
   }
-  if (
-    post.author.toString() !== userId.toString() &&
-    userRole !== "admin"
-  ) {
-    throw new UnprocessableEntity(
-      "You are not authorized to delete this post"
-    );
+  if (post.author.toString() !== userId.toString() && userRole !== "admin") {
+    throw new UnprocessableEntity("You are not authorized to delete this post");
   }
   // now delete the post
 
@@ -291,60 +297,76 @@ export const deleteUserPostService = async (
 
 export const likePostService = async (
   input: LikePostInput
-  ) : Promise<LikePostResult> => {
-    // find the post to be liked by its id
+): Promise<LikePostResult> => {
+  // find the post to be liked by its id
 
-const {postId, userId} = input;
+  const { postId, userId } = input;
 
-    const post = await Post.findById(postId);
+  const post = await Post.findById(postId);
 
-    if (!post) {
-      throw new BadRequest("Post not found");
-    }
-    // check if the user has already liked the post
+  if (!post) {
+    throw new BadRequest("Post not found");
+  }
+  // check if the user has already liked the post
 
-    const isAlreadyLiked = post.likes.some((like: LikeT) => {
-      // here it is important to use 'some' method to return boolean and it return true as soon as one match is found
-      return like.user.toString() ===userId.toString(); // like.user is objid that is accessed through likes schema and req.user?._id is also objid so both are converted to string for comparison
+  const isAlreadyLiked = post.likes.some((like: LikeT) => {
+    // here it is important to use 'some' method to return boolean and it return true as soon as one match is found
+    return like.user.toString() === userId.toString(); // like.user is objid that is accessed through likes schema and req.user?._id is also objid so both are converted to string for comparison
+  });
+  if (!isAlreadyLiked) {
+    await post.updateOne({
+      $push: {
+        likes: { user: userId }, // pushing the user id of the liker into the likes array of the post
+      },
     });
-    if (!isAlreadyLiked) {
-      await post.updateOne({
-        $push: {
-          likes: { user: userId }, // pushing the user id of the liker into the likes array of the post
-        },
-      });
-    } else {
-      await post.updateOne({
-        $pull: {
-          likes: {
-            user: userId // removing the user id from likes array if already liked
-          },
-        },
-      });
-    }
-    const updatedPost = await Post.findById(postId)
-      .select("-cloudinary_id")
-      .populate("author", "firstName lastName email")
-      .populate("likes.user", "firstName lastName profileUrl bio")
-      .populate("dislikes", "firstName lastName profileUrl bio")
-      .populate("shares", "firstName lastName profileUrl bio")
-      .populate("comments.user", "firstName lastName profileUrl bio")
-      .populate("views", "firstName lastName profileUrl bio");
+    const liker = await User.findById(userId).select("firstName lastName ");
 
-    if (!updatedPost) {
-      throw new BadRequest("Post not found after update");
-    }
-    // this return the updated post after like/unlike action
-    const data = {
-      post: { ...updatedPost._doc },
-    };
-return {isAlreadyLiked, data}
- 
+    if (post.author._id.toString() !== userId.toString()) {
+      await createNotificationService({
+        recipientId: post.author._id.toString(),
+        senderId: userId,
+        type: NotificationType.LIKE,
+        postId: postId,
+        message: `${liker?.firstName} ${liker?.lastName} liked your post.`,
+      });
+      await updateUserInteractionScore(
+  
+        userId,
+        post.author._id.toString(),
+        "like"
+      );
+    } // to avoid self notification
+  } else {
+    await post.updateOne({
+      $pull: {
+        likes: {
+          user: userId, // removing the user id from likes array if already liked
+        },
+      },
+    });
   }
 
+  const updatedPost = await Post.findById(postId)
+    .select("-cloudinary_id")
+    .populate("author", "firstName lastName email")
+    .populate("likes.user", "firstName lastName profileUrl bio")
+    .populate("dislikes", "firstName lastName profileUrl bio")
+    .populate("shares", "firstName lastName profileUrl bio")
+    .populate("comments.user", "firstName lastName profileUrl bio")
+    .populate("views", "firstName lastName profileUrl bio");
+
+  if (!updatedPost) {
+    throw new BadRequest("Post not found after update");
+  }
+  // this return the updated post after like/unlike action
+  const data = {
+    post: { ...updatedPost._doc },
+  };
+  return { isAlreadyLiked, data };
+};
 
 export const addCommentInPostService = async (
-input: AddCommentInPostInput
+  input: AddCommentInPostInput
 ): Promise<{ comment: any }> => {
   // find the post to which comment is to be added
   const { postId, userId, comments } = input;
@@ -370,16 +392,36 @@ input: AddCommentInPostInput
   post.comments.push(newComment._id);
   await post.save();
   await newComment.populate("user", "firstName lastName profileUrl bio");
-  
+
+const commenter = await User.findById(userId).select("firstName lastName ");
+
+if(commenter&& post.author._id.toString() !== userId.toString()) {
+
+await createNotificationService({
+  recipientId: post.author._id.toString(),
+  senderId: userId,
+  type: NotificationType.COMMENT,
+  postId: postId,
+  commentId: newComment._id.toString(),
+  message: `${commenter?.firstName} ${commenter?.lastName} commented on your post.`,
+})
+
+
+ await updateUserInteractionScore(userId, post.author._id.toString(), "comment");
+
+}
+
+
+
   return {
-    comment: newComment
+    comment: newComment,
   };
 };
 
 export const updateCommentInPostService = async (
-input: UpdateCommentInPostInput
+  input: UpdateCommentInPostInput
 ): Promise<{ comment: any }> => {
-  const { postId, commentId, userId,  newCommentText } = input;
+  const { postId, commentId, userId, newCommentText } = input;
   const post = await Post.findById(input);
   if (!post) {
     throw new BadRequest("Post not found");

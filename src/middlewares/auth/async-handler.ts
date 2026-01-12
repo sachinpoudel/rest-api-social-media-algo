@@ -1,13 +1,25 @@
-import type { Request, Response, NextFunction } from 'express';
-import { BadRequest } from '../error/app-error';
+import type { Request, Response, NextFunction, RequestHandler } from "express";
 
-type asyncHandlerType = (req:Request, res:Response, next:NextFunction) => Promise<void | Response>;
+type asyncHandlerType = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void | Response>;
 
+const toError = (error: unknown): Error => {
+  return error instanceof Error ? error : new Error(String(error));
+};
 
-export const asyncHandler =
-  (controller: asyncHandlerType) =>
-  (req: Request, res: Response, next: NextFunction) =>
-    Promise.resolve(controller(req, res, next)).catch(next);
+const forwardError = (nextFn: ErrorForwarder, error: unknown) => {
+  nextFn(toError(error));
+};
 
+type ErrorForwarder = (error: unknown) => void;
 
-    
+export const asyncHandler = (controller: asyncHandlerType): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    void controller(req, res, next).catch((error: unknown) => {
+      forwardError(next as ErrorForwarder, error);
+    });
+  };
+};

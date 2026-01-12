@@ -13,6 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@arcjet/inspect": "^1.0.0-beta.16",
+    "@arcjet/node": "^1.0.0-beta.16",
+    "@upstash/ratelimit": "^2.0.7",
     "@upstash/redis": "^1.36.0",
     "bcrypt": "^6.0.0",
     "check-lint": "^0.1.7",
@@ -24,11 +27,14 @@
     "dotenv": "^17.2.3",
     "dotenv-safe": "^9.1.0",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "ioredis": "^5.9.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.2",
     "multer": "^2.0.2",
+    "nodemon": "^3.1.11",
     "resend": "^6.6.0",
+    "xss": "^1.0.15",
     "zod": "^4.1.13"
   },
   "devDependencies": {

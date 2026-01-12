@@ -12,6 +12,7 @@ import {
 import { asyncHandler } from "../middlewares/auth/async-handler";
 import { AuthenticatedRequestBody } from "../interfaces/CustomTypes";
 import { IUser } from "../interfaces/User";
+import { HTTPSTATUS } from "../configs/http-config";
 
 
 
@@ -42,7 +43,6 @@ export const getUserController = asyncHandler(
   }
 );
 
-// ============= Social Interaction Controllers =============
 
 export const followUserController = asyncHandler(
   async (req: AuthenticatedRequestBody<IUser>, res: Response, next: NextFunction) => {
@@ -90,7 +90,7 @@ export const addFriendController = asyncHandler(
       targetUserId: userId,
     });
 
-    res.status(200).json({
+    res.status(HTTPSTATUS.OK).json({
       success: true,
       message: `You have added ${data.addedFriend.firstName} ${data.addedFriend.lastName} as a friend`,
       data: data.user,

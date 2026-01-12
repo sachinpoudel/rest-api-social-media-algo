@@ -174,14 +174,14 @@ export const loginUserService = async (
 
   if (!user) {
     throw new UnAuthorized(
-      "Invalid credentials. Email not found or registered"
+      "Invalid credentials.User not found or registered"
     );
   }
 
   const isPassValid = await user.comparepassword(password);
 
   if (!isPassValid) {
-    throw new UnAuthorized("Invalid credentials. Password did not match");
+    throw new UnAuthorized("Invalid credentials. Try again");
   }
 
   let token = await Token.findOne({ userId: user._id });

@@ -217,9 +217,27 @@ const UserSchema: mongoose.Schema<IUserDocument> =
         type: Date,
         default: null,
       },
+      interactWith: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+          score: {
+            type: Number,
+            default: 1
+          },
+          lastInteraction: {
+            type: Date,
+            default: Date.now
+          }
+        }
+      ]
     },
     { timestamps: true }
   );
+UserSchema.index({ "interactedWith.user": 1 });
+
 
 UserSchema.methods.comparepassword = async function (
   candidatePassword: string
@@ -233,7 +251,7 @@ UserSchema.methods.comparepassword = async function (
 UserSchema.pre("save", async function () { // pre bxz it runs before saving the document to the database and saves time and after that the save operation is performed
   const user = this as IUserDocument;
 
-  if (user.isModified("password")) { // we only want to hash the password if it has been modified (or is new)
+  if (user.isModified("password")) { // we only want to hash the password if it has been modified (or is new) if we dont do this every time we save the user document the password will be hashed again and again and we wont be able to login
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     user.confirmPassword = await bcrypt.hash(user.confirmPassword, salt);
